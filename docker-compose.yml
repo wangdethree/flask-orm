@@ -13,9 +13,6 @@ services:
     restart: unless-stopped
 
   web:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile.prod
     image: flask-orm:prod
     container_name: web-orm
     environment:
@@ -28,8 +25,8 @@ services:
       - AES_KEY=${AES_KEY:-0123456789abcdef0123456789abcdef}
       - DB_HOST=mysql
       - DB_PORT=3306
-      - GUNICORN_WORKERS=4
-      - GUNICORN_PORT=5000
+      - GUNICORN_WORKERS=2
+      - PORT=5000
     depends_on:
       mysql:
         condition: service_healthy

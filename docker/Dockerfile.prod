@@ -20,6 +20,7 @@ LABEL description="Flask ORM User Management Service"
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         curl \
+        netcat-openbsd \
         ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
@@ -38,8 +39,9 @@ COPY app/ ./app/
 COPY manage.py .
 COPY migrations/ ./migrations/
 
-# 复制启动脚本
+# 复制启动脚本和配置
 COPY docker/entrypoint.sh /entrypoint.sh
+COPY docker/gunicorn_config.py /app/gunicorn_config.py
 RUN chmod +x /entrypoint.sh
 
 RUN chown -R flaskuser:flaskuser /app
@@ -48,4 +50,4 @@ USER flaskuser
 EXPOSE 5000
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["gunicorn", "-c", "docker/gunicorn_config.py", "manage:app"]
+CMD ["gunicorn", "-c", "gunicorn_config.py", "manage:app"]
