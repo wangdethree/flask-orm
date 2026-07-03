@@ -1,0 +1,37 @@
+stages:
+  - build
+  - push
+
+variables:
+  REGISTRY: dockerhub.datagrand.com
+  IMAGE_NAME: jinquzu/zuoye/flask-orm
+
+build-prod:
+  stage: build
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
+    - echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USERNAME" --password-stdin $REGISTRY
+  script:
+    - docker build -f docker/Dockerfile.prod -t $REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA -t $REGISTRY/$IMAGE_NAME:latest .
+    - docker push $REGISTRY/$IMAGE_NAME:$CI_COMMIT_SHORT_SHA
+    - docker push $REGISTRY/$IMAGE_NAME:latest
+  only:
+    - main
+    - master
+    - tags
+
+build-debug:
+  stage: build
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
+    - echo "$REGISTRY_PASSWORD" | docker login -u "$REGISTRY_USERNAME" --password-stdin $REGISTRY
+  script:
+    - docker build -f docker/Dockerfile.debug -t $REGISTRY/$IMAGE_NAME:debug .
+    - docker push $REGISTRY/$IMAGE_NAME:debug
+  only:
+    - main
+    - master

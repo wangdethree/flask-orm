@@ -1,0 +1,17 @@
+# .dockerignore
+__pycache__
+*.pyc
+*.pyo
+*.egg-info
+.git
+.gitignore
+.idea
+.vscode
+*.swp
+venv
+.env
+*.log
+docker-compose*.yml
+Dockerfile*
+nginx.conf
+README.md
